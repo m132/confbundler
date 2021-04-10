@@ -116,36 +116,18 @@ class OverrideBundle:
         return bundle
 
 def compile_bundles(bundles: Iterable[OverrideBundle], output: BinaryIO) -> None:
-    with tarfile.open(fileobj=output, mode='w', format=tarfile.GNU_FORMAT) as tar:
+    with tarfile.open(fileobj=output, mode='w', format=tarfile.GNU_FORMAT, dereference=False) as tar:
         # TODO: deduplicate and sort the files
         for bundle in bundles:
             for file in bundle.files:
-                fs_path = bundle.root / \
-                          (file.path if not file.path.is_absolute() else file.path.relative_to('/'))
-                fs_stat = None
-                tar_info = tarfile.TarInfo(str(file.path))
+                path = file.path if not file.path.is_absolute() else file.path.relative_to('/')
 
                 try:
-                    fs_stat = fs_path.lstat()
-                    tar_info.size = fs_stat.st_size
-                    tar_info.mtime = fs_stat.st_mtime
-
-                    if S_ISREG(fs_stat.st_mode):
-                        tar_info.type = tarfile.REGTYPE
-                    elif S_ISDIR(fs_stat.st_mode):
-                        tar_info.type = tarfile.DIRTYPE
-                    elif S_ISFIFO(fs_stat.st_mode):
-                        tar_info.type = tarfile.FIFOTYPE
-                    elif S_ISLNK(fs_stat.st_mode):
-                        tar_info.type = tarfile.SYMTYPE
-                    elif S_ISCHR(fs_stat.st_mode):
-                        tar_info.type = tarfile.CHRTYPE
-                    elif S_ISBLK(fs_stat.st_mode):
-                        tar_info.type = tarfile.BLKTYPE
-                except OSError as exception:
-                    # TODO: use logging instead
-                    # TODO: support fully inline definitions
-                    print(exception)
+                    tar_info = tar.gettarinfo(str(bundle.root / path), str(path))
+                except FileNotFoundError:
+                    # TODO: support inline definitions of non-directory entries
+                    tar_info = tarfile.TarInfo(str(path))
+                    tar_info.type = tarfile.DIRTYPE
 
                 tar_info.mode = file.mode or \
                     (0o755 if tar_info.type == tarfile.DIRTYPE else 0o644)
@@ -154,8 +136,8 @@ def compile_bundles(bundles: Iterable[OverrideBundle], output: BinaryIO) -> None
                 tar_info.uname = file.user or 'root'
                 tar_info.gname = file.group or 'root'
 
-                if fs_stat and tar_info.type == tarfile.REGTYPE:
-                    with fs_path.open('rb') as fobj:
+                if tar_info.type == tarfile.REGTYPE:
+                    with (bundle.root / path).open('rb') as fobj:
                         tar.addfile(tar_info, fobj)
                 else:
                     tar.addfile(tar_info)
