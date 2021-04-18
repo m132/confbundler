@@ -6,6 +6,7 @@ from inspect import Parameter, signature
 from itertools import islice
 from pathlib import Path, PurePath, PurePosixPath
 from typing import Any, BinaryIO, Dict, Optional, Tuple, Type, TypeVar, Union
+from warnings import warn
 
 import yaml
 
@@ -249,7 +250,7 @@ class OverrideBundle:
                 if file.state == OverrideFile.State.FROM_HOST:
                     tar_info = tar.gettarinfo(str(file.source), str(dest))
                 elif file.state in (OverrideFile.State.FROM_TARGET, OverrideFile.State.ABSENT):
-                    raise NotImplementedError(f'OverrideFiles of {file.state.name} type are not supported by compile() yet')
+                    warn(f'OverrideFiles of {file.state.name} type are not supported by compile() yet', stacklevel=2)
                 else:
                     tar_info = tarfile.TarInfo(str(dest))
                     tar_info.type = {
