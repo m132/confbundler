@@ -238,7 +238,8 @@ class OverrideBundle:
                     while loader.check_data():
                         parsed = loader.get_data()
                         for i in self.__slots__:
-                            getattr(self, i).update(parsed[i])
+                            if i in parsed:
+                                getattr(self, i).update(parsed[i])
                 finally:
                     loader.dispose()
         else:
