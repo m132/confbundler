@@ -2,14 +2,14 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-from override import OverrideBundle, compile_bundles
+from override import OverrideBundle
 
 
 def main() -> None:
     parser = ArgumentParser('override-generator')
     parser.add_argument('-f', '--force', action='store_true',
         help='overwrite the output file if it already exists')
-    parser.add_argument('bundles', nargs='+',
+    parser.add_argument('bundles', nargs='+', type=Path,
         help='paths to bundles to compile', metavar='BUNDLE')
     parser.add_argument('output', type=Path,
         help='output file', metavar='OUTPUT')
@@ -21,7 +21,12 @@ def main() -> None:
         parser.error(str(exception))
 
     try:
-        compile_bundles(map(OverrideBundle.from_dir, args.bundles), output)
+        bundle = OverrideBundle()
+
+        for i in args.bundles:
+            bundle.update(i)
+
+        bundle.compile(output)
     finally:
         output.close()
 
