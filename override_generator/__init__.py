@@ -192,7 +192,10 @@ class OverrideFile(OverrideEntity):
 
         path = path if not path.is_absolute() else path.relative_to('/')
         if 'source' not in state:
-            state['source'] = str(loader.root / path)
+            if 'state' not in state or state['state'] == cls.State.FROM_HOST.value:
+                state['source'] = str(loader.root / path)
+            else:
+                state['source'] = str(path)
         instance.__setstate__(state)
 
         return (path, instance)
@@ -247,11 +250,12 @@ class OverrideBundle:
 
     def compile(self, output: BinaryIO) -> None:
         with tarfile.open(fileobj=output, mode='w', format=tarfile.GNU_FORMAT, dereference=False) as tar:
-            for dest, file in self.files.items():
+            for dest, file in sorted(self.files.items()):
                 if file.state == OverrideFile.State.FROM_HOST:
                     tar_info = tar.gettarinfo(str(file.source), str(dest))
                 elif file.state in (OverrideFile.State.FROM_TARGET, OverrideFile.State.ABSENT):
                     warn(f'OverrideFiles of {file.state.name} type are not supported by compile() yet', stacklevel=2)
+                    continue
                 else:
                     tar_info = tarfile.TarInfo(str(dest))
                     tar_info.type = {
