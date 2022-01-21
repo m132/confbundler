@@ -4,8 +4,8 @@ from tarfile import (BLKTYPE, CHRTYPE, DIRTYPE, FIFOTYPE, PAX_FORMAT, REGTYPE,
                      SYMTYPE, TarFile, TarInfo)
 from typing import IO, Iterable, cast
 
-from override_generator.types import AbsentResource
-from override_generator.types.filesystem import (Device, Directory, Entry,
+from confbundler.types import AbsentResource
+from confbundler.types.filesystem import (Device, Directory, Entry,
                                                  File, Pipe, SymbolicLink)
 
 

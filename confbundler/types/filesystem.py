@@ -9,7 +9,7 @@ from pathlib import Path, PurePosixPath
 from stat import S_ISBLK, S_ISCHR, S_ISDIR, S_ISFIFO, S_ISLNK, S_ISREG
 from typing import IO
 
-from override_generator.types.user import Group, User
+from confbundler.types.user import Group, User
 
 
 @dataclass(init=False, kw_only=True)

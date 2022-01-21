@@ -9,13 +9,13 @@ from yaml.constructor import ConstructorError
 from yaml.error import Mark
 from yaml.nodes import Node
 
-from override_generator.types import AbsentResource
-from override_generator.types.bundle import Bundle
-from override_generator.types.filesystem import (BundledEntry, Device,
+from confbundler.types import AbsentResource
+from confbundler.types.bundle import Bundle
+from confbundler.types.filesystem import (BundledEntry, Device,
                                                  Directory, Entry, File, Pipe,
                                                  RemoteEntry, SymbolicLink)
-from override_generator.types.package import Package
-from override_generator.types.user import Group, User
+from confbundler.types.package import Package
+from confbundler.types.user import Group, User
 
 T = TypeVar('T')
 

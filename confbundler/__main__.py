@@ -2,11 +2,11 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-from override_generator.adapters.tar import write_out
-from override_generator.adapters.yaml import load
-from override_generator.types.bundle import Bundle
+from confbundler.adapters.tar import write_out
+from confbundler.adapters.yaml import load
+from confbundler.types.bundle import Bundle
 
-parser = ArgumentParser('override-generator')
+parser = ArgumentParser('confbundler')
 parser.add_argument('-f', '--force', action='store_true',
                     help='overwrite the output file if it already exists')
 parser.add_argument('bundles', nargs='+', type=Path,

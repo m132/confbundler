@@ -4,10 +4,10 @@ from itertools import chain
 from pathlib import PurePosixPath
 from typing import Any, TypeVar
 
-from override_generator.types import AbsentResource
-from override_generator.types.filesystem import BundledEntry, Entry
-from override_generator.types.package import Package
-from override_generator.types.user import User
+from confbundler.types import AbsentResource
+from confbundler.types.filesystem import BundledEntry, Entry
+from confbundler.types.package import Package
+from confbundler.types.user import User
 
 T = TypeVar('T')
 
