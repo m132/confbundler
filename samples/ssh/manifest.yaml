@@ -1,0 +1,19 @@
+packages:
+  - google-authenticator
+  - openssh-server
+
+files:
+  - /**/*.conf
+  - /etc/pam.d/sshd
+  - /etc/ssh/ssh_host_*:
+      state: from-target
+  - /root/.ssh/authorized_keys:
+      state: file
+      mode: 0600
+      content: !!binary c3NoLWVkMjU1MTkgdGVzdC1rZXkgdXNlckBsb2NhbGhvc3QK
+  - /var/lib/google-authenticator:
+      mode: 0700
+      owner: google-authenticator
+      group: google-authenticator
+      xattrs:
+        security.selinux: system_u:object_r:var_auth_t:s0
